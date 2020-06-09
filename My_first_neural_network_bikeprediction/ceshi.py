@@ -12,3 +12,4 @@ b = np.arange(len(a))[12::24]
 print(np.arange(len(a)))
 
 print(b)
+
