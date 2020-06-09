@@ -97,4 +97,3 @@ plt.xlabel('X')  # 更改坐标轴标注
 plt.ylabel('Y')  # 更改坐标轴标注
 plt.legend([xplot, yplot], ['Data', 'Prediction'])  # 绘制图例
 plt.show()
-
