@@ -358,3 +358,4 @@ for i in range(len(model[0].weight)):
     for i in range(20):
         word = index2word(st[i][1],diction)
         print(word)
+        
