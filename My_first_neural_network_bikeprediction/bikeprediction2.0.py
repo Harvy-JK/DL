@@ -107,3 +107,4 @@ plt.plot(np.arange(len(losses)) * 100, losses, 'o-')
 plt.xlabel('epoch')
 plt.ylabel('MSE')
 plt.show()
+
