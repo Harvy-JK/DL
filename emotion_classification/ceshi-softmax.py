@@ -1,7 +1,6 @@
-# 先搜集数据，通过制作一个简单的网页爬虫程序即可
 # 抓取网页内容所需要的包
 import json
-import requests
+import requests # Requests 是⽤Python语⾔编写，基于urllib，采⽤Apache2 Licensed开源协议的 HTTP 库
 
 # Pytorch所需要的包
 import torch
@@ -9,21 +8,22 @@ import torch.nn as nn
 import torch.optim
 
 # 自然语言处理（NLP）所需要的包
-import re  # 正式表达式的包
-import jieba
+import re  # 正式表达式的包，用来对文本的过滤或者规则的匹配
+import jieba # 中文分词库
 from collections import Counter
 
 import matplotlib.pyplot as plt
 import numpy as np
 # %matplotlib inline     # 这里jupyter魔法公式，pycharm不适用
 
-
+# **********************************************************
+# 先搜集数据，通过制作一个简单的网页爬虫程序即可
 # 在指定的url处获得评论
 def get_comments(url):
-    comments = []
+    comments = []   # 收集
     # 打开指定页面
     resp = requests.get(url)
-    resp.encoding = 'gbk'
+    resp.encoding = 'gbk' # 汉字字库之一
 
     # 如果200秒没有打开则失败
     if resp.status_code != 200:
@@ -57,15 +57,16 @@ good_comments = []
 # 评论抓取的来源地址，其中参数包括：
 # productId为商品的id，score为评分，page为对应的评论翻页的页码，pageSize为总页数
 # 这里，我们设定score＝3表示好的评分。
+# 任天堂Switch游戏机，sony降噪耳机豆，大疆Mavic Air2， go pro Hero8， insta 360， SONY Alpha 7R IV， RTX 2080，mac
 good_comment_url_templates = [
-    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv8914&productId=10359162198&score=3&sortType=5&page={}&pageSize=10&isShadowSku=0',
-    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv73&productId=10968941641&score=3&sortType=5&page={}&pageSize=10&isShadowSku=0',
-    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv4653&productId=10335204102&score=3&sortType=5&page={}&pageSize=10&isShadowSku=0',
-    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv1&productId=1269194114&score=3&sortType=5&page={}&pageSize=10&isShadowSku=0',
-    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv2777&productId=1409704820&score=3&sortType=5&page={}&pageSize=10&isShadowSku=0',
-    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv174&productId=10103790891&score=3&sortType=5&page={}&pageSize=10&isShadowSku=0',
-    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv9447&productId=1708318938&score=3&sortType=5&page={}&pageSize=10&isShadowSku=0',
-    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv111&productId=10849803616&score=3&sortType=5&page={}&pageSize=10&isShadowSku=0'
+    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98&productId=100010566524&score=0&sortType=5&page=0&pageSize=10&isShadowSku=100010343850&fold=1',
+    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98&productId=100006585530&score=0&sortType=5&page=0&pageSize=10&isShadowSku=0&fold=1',
+    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98&productId=100012791070&score=0&sortType=5&page=0&pageSize=10&isShadowSku=0&fold=1',
+    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98&productId=100004918245&score=0&sortType=5&page=0&pageSize=10&isShadowSku=0&fold=1',
+    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98&productId=100007877688&score=0&sortType=5&page=0&pageSize=10&isShadowSku=0&fold=1',
+    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98&productId=100006852812&score=0&sortType=5&page=0&pageSize=10&isShadowSku=0&fold=1',
+    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98&productId=100001121028&score=0&sortType=5&page=0&pageSize=10&isShadowSku=0&fold=1',
+    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98&productId=100007136953&score=0&sortType=5&page=0&pageSize=10&isShadowSku=0&fold=1'
 ]
 
 # 对上述网址进行循环，并模拟翻页100次
@@ -83,14 +84,14 @@ fw.writelines(good_comments)
 # 负向评论如法炮制
 bad_comments = []
 bad_comment_url_templates = [
-    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv8914&productId=10359162198&score=1&sortType=5&page={}&pageSize=10&isShadowSku=0',
-    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv73&productId=10968941641&score=1&sortType=5&page={}&pageSize=10&isShadowSku=0',
-    'http://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv4653&productId=10335204102&score=1&sortType=5&page={}&pageSize=10&isShadowSku=0',
-    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv1&productId=1269194114&score=1&sortType=5&page={}&pageSize=10&isShadowSku=0',
-    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv2777&productId=1409704820&score=1&sortType=5&page={}&pageSize=10&isShadowSku=0',
-    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv174&productId=10103790891&score=1&sortType=5&page={}&pageSize=10&isShadowSku=0',
-    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv9447&productId=1708318938&score=1&sortType=5&page={}&pageSize=10&isShadowSku=0',
-    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv111&productId=10849803616&score=1&sortType=5&page={}&pageSize=10&isShadowSku=0'
+    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98&productId=100010566524&score=0&sortType=5&page=0&pageSize=10&isShadowSku=100010343850&fold=1',
+    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98&productId=100006585530&score=0&sortType=5&page=0&pageSize=10&isShadowSku=0&fold=1',
+    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98&productId=100012791070&score=0&sortType=5&page=0&pageSize=10&isShadowSku=0&fold=1',
+    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98&productId=100004918245&score=0&sortType=5&page=0&pageSize=10&isShadowSku=0&fold=1',
+    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98&productId=100007877688&score=0&sortType=5&page=0&pageSize=10&isShadowSku=0&fold=1',
+    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98&productId=100006852812&score=0&sortType=5&page=0&pageSize=10&isShadowSku=0&fold=1',
+    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98&productId=100001121028&score=0&sortType=5&page=0&pageSize=10&isShadowSku=0&fold=1',
+    'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98&productId=100007136953&score=0&sortType=5&page=0&pageSize=10&isShadowSku=0&fold=1'
 ]
 
 j = 0
@@ -358,4 +359,3 @@ for i in range(len(model[0].weight)):
     for i in range(20):
         word = index2word(st[i][1],diction)
         print(word)
-        
