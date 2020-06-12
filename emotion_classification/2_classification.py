@@ -219,3 +219,4 @@ plt.xlabel('Steps')
 plt.ylabel('Loss & Accuracy')
 plt.legend()
 plt.show()
+
