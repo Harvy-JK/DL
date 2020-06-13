@@ -105,3 +105,4 @@ for bad_comment_url_template in bad_comment_url_templates:
 
 fw = open('data/bad.txt', 'w')
 fw.writelines(bad_comments)
+
