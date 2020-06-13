@@ -32,3 +32,4 @@ target = torch.tensor([0, 2, 1])
 print(loss(torch.log(sm(input)), target))
 loss = torch.nn.CrossEntropyLoss()
 print(loss(input, target))
+
